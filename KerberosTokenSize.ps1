@@ -5,7 +5,7 @@ Use:  Get all users Token Size
 #>
 
 $StartPath = $PSScriptRoot
-$output = 'C:\Temp\R\TokenSize.csv'
+$output = "$PSScriptRoot\TokenSize.csv"
 
 function Split-array 
 {
