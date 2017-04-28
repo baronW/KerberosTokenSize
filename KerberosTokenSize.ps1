@@ -1,7 +1,12 @@
 ﻿<#
 Date: 28/04/2107
 Use:  Get all users Token Size
+
 #>
+
+$StartPath = $PSScriptRoot
+$output = 'C:\Temp\R\TokenSize.csv'
+
 function Split-array 
 {
 
@@ -149,7 +154,6 @@ $TokenSizes = foreach ($User in $adusers){
     write-host $CountDown Green
 }
 
-$TokenSizes | Export-Csv -Path C:\Temp\R\TokenSize.csv -Force -NoTypeInformation
+$TokenSizes | Export-Csv -Path $Output -Force -NoTypeInformation
 
 
-#spam
