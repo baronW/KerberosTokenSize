@@ -5,7 +5,11 @@ Use:  Get all users Token Size
 #>
 
 $StartPath = $PSScriptRoot
-$output = "$PSScriptRoot\TokenSize.csv"
+$OutputPath = "$PSScriptRoot\TokenSize"
+
+Import-Module "\\wn0Packages\Packages\_EUC\SourceControl\ExportExcel\ExportExcel.psm1"
+
+#Start-Sleep -Seconds 200
 
 function Split-array 
 {
@@ -145,15 +149,21 @@ $TokenSizes = foreach ($User in $adusers){
 
     $size = $(($UserHash.Values | Measure-Object -Sum).sum + 1200)
 
+    $GlobalGroups = $UserHash.Keys | ?{$UserHash.$_ -eq '8'}
+    $DomainLocalGroups = $UserHash.Keys | ?{$UserHash.$_ -eq '40'}
+
     $output = New-Object -TypeName psobject
     $output | Add-Member -Name 'Name' -MemberType NoteProperty -Value $User.name
     $output | Add-Member -Name 'User ID' -MemberType NoteProperty -Value $User.SamAccountName
     $output | Add-Member -Name 'Token Size' -MemberType NoteProperty -Value $size
+    $output | Add-Member -Name 'GroupCount' -MemberType NoteProperty -Value $UserHash.Values.Count
+    $output | Add-Member -Name 'GlobalGroups(8)' -MemberType NoteProperty -Value $GlobalGroups.Count
+    $output | Add-Member -Name 'DomainLocalGroups(40)' -MemberType NoteProperty -Value $DomainLocalGroups.Count
     $output 
     $CountDown--
-    write-host $CountDown Green
+    write-host $CountDown -ForegroundColor Green
 }
 
-$TokenSizes | Export-Csv -Path $Output -Force -NoTypeInformation
-
+$TokenSizes | Export-Csv -Path "$OutputPath$(Get-Date -Format "yyyy-MM-dd").csv" -Force -NoTypeInformation
+$TokenSizes | Export-Excel -Path "$OutputPath$(Get-Date -Format "yyyy-MM-dd").xlsx" -SheetName "TokenSizes" -CloseCOM
 
